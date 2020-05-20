@@ -67,7 +67,7 @@ class LaneDetector():
         return res[:, :, 0]
 
     def perspective_warp(self, img, dst_size=(640, 480),
-                        src=np.float32([(0.285, 0.44), (0.6, 0.44), (0.015, 0.833), (.828, 0.833)]),
+                        src=np.float32([(0.35, 0.44), (0.67, 0.44), (0.07, 0.72), (.94, 0.72)]),
                         dst=np.float32([(0, 0), (1, 0), (0, 1), (1, 1)])):
 
         # src: (x,y) -> TopLeft, TopRight, BottomLeft, BottomRight
@@ -83,7 +83,7 @@ class LaneDetector():
     def inv_perspective_warp(self, img,
                             dst_size=(640, 480),
                             src=np.float32([(0, 0), (1, 0), (0, 1), (1, 1)]),
-                            dst=np.float32([(0.285, 0.44), (0.6, 0.44), (0.015, 0.833), (.828, 0.833)])):
+                            dst=np.float32([(0.35, 0.44), (0.67, 0.44), (0.07, 0.72), (.94, 0.72)])):
         img_size = np.float32([(img.shape[1], img.shape[0])])
         src = src * img_size
         dst = dst * np.float32(dst_size)
@@ -217,8 +217,8 @@ class LaneDetector():
         xm_per_pix = 100/640  # meters per pixel in x dimension
 
         # Fit new polynomials to x,y in world space
-        print(ploty)
-        print(leftx)
+       # print(ploty)
+       # print(leftx)
 
         left_fit_cr = np.polyfit(ploty, leftx, 2)
         right_fit_cr = np.polyfit(ploty, rightx, 2)
@@ -243,7 +243,7 @@ class LaneDetector():
         r_fit_x_int = right_fit_cr[0]*img.shape[0]**2 + right_fit_cr[1]*img.shape[0] + right_fit_cr[2]
 
         lane_center_position = (r_fit_x_int + l_fit_x_int) / 2
-        center = (car_pos - lane_center_position) * xm_per_pix / 10
+        center = (car_pos - lane_center_position)
         # print(l_fit_x_int, r_fit_x_int, car_pos - lane_center_position * xm_per_pix)
         # Now our radius of curvature is in meters
         return (left_curverad, right_curverad, center), theta
@@ -279,7 +279,9 @@ class LaneDetector():
         lane_curve = np.mean([curverad[0], curverad[1]])
         img = self.draw_lanes(img, curves[0], curves[1])
 
-        return img
+        laneinfo = {"offset": "{:.4f}".format(curverad[2]),
+                    "Theta": "{:.4f}".format(90-math.degrees(theta))}
+        return img, str(laneinfo)
 
         # return 'Vehicle offset: {:.4f} cm\n'.format(curverad[2]) + 'Theta: {:.4f} degrees\n'.format(90-math.degrees(theta)) + '----\n'
 
