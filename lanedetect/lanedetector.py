@@ -243,7 +243,7 @@ class LaneDetector():
         r_fit_x_int = right_fit_cr[0]*img.shape[0]**2 + right_fit_cr[1]*img.shape[0] + right_fit_cr[2]
 
         lane_center_position = (r_fit_x_int + l_fit_x_int) / 2
-        center = (car_pos - lane_center_position) * xm_per_pix / 10
+        center = (car_pos - lane_center_position)
         # print(l_fit_x_int, r_fit_x_int, car_pos - lane_center_position * xm_per_pix)
         # Now our radius of curvature is in meters
         return (left_curverad, right_curverad, center), theta
